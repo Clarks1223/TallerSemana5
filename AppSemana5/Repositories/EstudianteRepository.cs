@@ -38,6 +38,11 @@ namespace AppSemana5.Repositories
             Conexion().Insert(new Estudiante { Nombre = nombre });
         }
 
+        public void Actualizar(int id, string nombre)
+        {
+            Conexion().Update(new Estudiante { Id = id, Nombre = nombre });
+        }
+
         public void Eliminar(int id)
         {
             Conexion().Delete<Estudiante>(id);

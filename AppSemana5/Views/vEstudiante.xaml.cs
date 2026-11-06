@@ -7,6 +7,9 @@ namespace AppSemana5.Views
     {
         private readonly EstudianteRepository _repositorio;
 
+        // Estudiante que se está editando; null significa que se va a agregar uno nuevo.
+        private Estudiante? _enEdicion;
+
         public vEstudiante(EstudianteRepository repositorio)
         {
             InitializeComponent();
@@ -14,7 +17,7 @@ namespace AppSemana5.Views
             CargarLista();
         }
 
-        private void OnAgregarClicked(object? sender, EventArgs e)
+        private void OnGuardarClicked(object? sender, EventArgs e)
         {
             string nombre = txtNombre.Text?.Trim() ?? string.Empty;
 
@@ -26,7 +29,10 @@ namespace AppSemana5.Views
 
             try
             {
-                _repositorio.Agregar(nombre);
+                if (_enEdicion is null)
+                    _repositorio.Agregar(nombre);
+                else
+                    _repositorio.Actualizar(_enEdicion.Id, nombre);
             }
             catch (Exception ex)
             {
@@ -34,9 +40,26 @@ namespace AppSemana5.Views
                 return;
             }
 
-            txtNombre.Text = string.Empty;
-            lblMensaje.IsVisible = false;
+            LimpiarFormulario();
             CargarLista();
+        }
+
+        private void OnEditarClicked(object? sender, EventArgs e)
+        {
+            if (sender is not Button { BindingContext: Estudiante estudiante })
+                return;
+
+            _enEdicion = estudiante;
+            txtNombre.Text = estudiante.Nombre;
+            btnGuardar.Text = "Actualizar";
+            btnCancelar.IsVisible = true;
+            lblMensaje.IsVisible = false;
+            txtNombre.Focus();
+        }
+
+        private void OnCancelarClicked(object? sender, EventArgs e)
+        {
+            LimpiarFormulario();
         }
 
         private void OnEliminarClicked(object? sender, EventArgs e)
@@ -54,6 +77,10 @@ namespace AppSemana5.Views
                 return;
             }
 
+            // Si se elimina el estudiante que estaba en edición, el formulario vuelve a "Agregar".
+            if (_enEdicion?.Id == estudiante.Id)
+                LimpiarFormulario();
+
             lblMensaje.IsVisible = false;
             CargarLista();
         }
@@ -68,6 +95,15 @@ namespace AppSemana5.Views
             {
                 MostrarMensaje($"No se pudo cargar la lista: {ex.Message}");
             }
+        }
+
+        private void LimpiarFormulario()
+        {
+            _enEdicion = null;
+            txtNombre.Text = string.Empty;
+            btnGuardar.Text = "Agregar";
+            btnCancelar.IsVisible = false;
+            lblMensaje.IsVisible = false;
         }
 
         private void MostrarMensaje(string mensaje)

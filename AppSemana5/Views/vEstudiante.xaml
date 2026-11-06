@@ -9,18 +9,27 @@
           RowSpacing="12"
           Padding="16">
 
-        <!-- Formulario para ingresar -->
+        <!-- Formulario para ingresar o editar -->
         <Entry x:Name="txtNombre"
                Grid.Row="0"
                Placeholder="Nombre del estudiante"
                MaxLength="100"
                ReturnType="Done"
-               Completed="OnAgregarClicked"
+               Completed="OnGuardarClicked"
                SemanticProperties.Hint="Escribe el nombre del estudiante" />
 
-        <Button Grid.Row="1"
-                Text="Agregar"
-                Clicked="OnAgregarClicked" />
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="8">
+            <Button x:Name="btnGuardar"
+                    Text="Agregar"
+                    Clicked="OnGuardarClicked" />
+            <Button x:Name="btnCancelar"
+                    Grid.Column="1"
+                    Text="Cancelar"
+                    IsVisible="False"
+                    Clicked="OnCancelarClicked" />
+        </Grid>
 
         <Label x:Name="lblMensaje"
                Grid.Row="2"
@@ -37,7 +46,7 @@
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Estudiante">
-                    <Grid ColumnDefinitions="*,Auto"
+                    <Grid ColumnDefinitions="*,Auto,Auto"
                           ColumnSpacing="8"
                           Padding="0,8">
                         <Label Text="{Binding Nombre}"
@@ -45,6 +54,9 @@
                                VerticalOptions="Center"
                                LineBreakMode="TailTruncation" />
                         <Button Grid.Column="1"
+                                Text="Editar"
+                                Clicked="OnEditarClicked" />
+                        <Button Grid.Column="2"
                                 Text="Eliminar"
                                 Clicked="OnEliminarClicked" />
                     </Grid>

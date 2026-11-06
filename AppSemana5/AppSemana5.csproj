@@ -28,7 +28,7 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>Semana 3 App</ApplicationTitle>
+		<ApplicationTitle>Semana 5 App</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.appsemana5</ApplicationId>
