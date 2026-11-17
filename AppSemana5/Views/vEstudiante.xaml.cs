@@ -7,82 +7,34 @@ namespace AppSemana5.Views
     {
         private readonly EstudianteRepository _repositorio;
 
-        // Estudiante que se está editando; null significa que se va a agregar uno nuevo.
-        private Estudiante? _enEdicion;
-
         public vEstudiante(EstudianteRepository repositorio)
         {
             InitializeComponent();
             _repositorio = repositorio;
+        }
+
+        // Se ejecuta al abrir la página y cada vez que se vuelve a ella desde
+        // agregar o actualizar/eliminar, así la tabla siempre está al día.
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
             CargarLista();
         }
 
-        private void OnGuardarClicked(object? sender, EventArgs e)
+        private async void OnAgregarClicked(object? sender, EventArgs e)
         {
-            string nombre = txtNombre.Text?.Trim() ?? string.Empty;
-
-            if (nombre.Length == 0)
-            {
-                MostrarMensaje("Escribe un nombre.");
-                return;
-            }
-
-            try
-            {
-                if (_enEdicion is null)
-                    _repositorio.Agregar(nombre);
-                else
-                    _repositorio.Actualizar(_enEdicion.Id, nombre);
-            }
-            catch (Exception ex)
-            {
-                MostrarMensaje($"No se pudo guardar: {ex.Message}");
-                return;
-            }
-
-            LimpiarFormulario();
-            CargarLista();
+            await Navigation.PushAsync(new vAgregarEstudiante(_repositorio));
         }
 
-        private void OnEditarClicked(object? sender, EventArgs e)
+        private async void OnEstudianteSeleccionado(object? sender, SelectionChangedEventArgs e)
         {
-            if (sender is not Button { BindingContext: Estudiante estudiante })
+            if (e.CurrentSelection.FirstOrDefault() is not Estudiante estudiante)
                 return;
 
-            _enEdicion = estudiante;
-            txtNombre.Text = estudiante.Nombre;
-            btnGuardar.Text = "Actualizar";
-            btnCancelar.IsVisible = true;
-            lblMensaje.IsVisible = false;
-            txtNombre.Focus();
-        }
+            // Se limpia la selección para poder volver a tocar la misma fila al regresar.
+            lstEstudiantes.SelectedItem = null;
 
-        private void OnCancelarClicked(object? sender, EventArgs e)
-        {
-            LimpiarFormulario();
-        }
-
-        private void OnEliminarClicked(object? sender, EventArgs e)
-        {
-            if (sender is not Button { BindingContext: Estudiante estudiante })
-                return;
-
-            try
-            {
-                _repositorio.Eliminar(estudiante.Id);
-            }
-            catch (Exception ex)
-            {
-                MostrarMensaje($"No se pudo eliminar: {ex.Message}");
-                return;
-            }
-
-            // Si se elimina el estudiante que estaba en edición, el formulario vuelve a "Agregar".
-            if (_enEdicion?.Id == estudiante.Id)
-                LimpiarFormulario();
-
-            lblMensaje.IsVisible = false;
-            CargarLista();
+            await Navigation.PushAsync(new vActualizarEliminar(_repositorio, estudiante));
         }
 
         private void CargarLista()
@@ -90,26 +42,13 @@ namespace AppSemana5.Views
             try
             {
                 lstEstudiantes.ItemsSource = _repositorio.ObtenerTodos();
+                lblMensaje.IsVisible = false;
             }
             catch (Exception ex)
             {
-                MostrarMensaje($"No se pudo cargar la lista: {ex.Message}");
+                lblMensaje.Text = $"No se pudo cargar la lista: {ex.Message}";
+                lblMensaje.IsVisible = true;
             }
-        }
-
-        private void LimpiarFormulario()
-        {
-            _enEdicion = null;
-            txtNombre.Text = string.Empty;
-            btnGuardar.Text = "Agregar";
-            btnCancelar.IsVisible = false;
-            lblMensaje.IsVisible = false;
-        }
-
-        private void MostrarMensaje(string mensaje)
-        {
-            lblMensaje.Text = mensaje;
-            lblMensaje.IsVisible = true;
         }
     }
 }

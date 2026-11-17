@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AppSemana5.Views.vActualizarEliminar"
+             Title="Actualizar - Eliminar estudiante">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16"
+                             Spacing="8">
+
+            <Label Text="Código" />
+            <Entry x:Name="txtCodigo"
+                   IsReadOnly="True" />
+
+            <Label Text="Nombre" />
+            <Entry x:Name="txtNombre"
+                   Placeholder="Nombre"
+                   MaxLength="50"
+                   ReturnType="Next" />
+
+            <Label Text="Apellido" />
+            <Entry x:Name="txtApellido"
+                   Placeholder="Apellido"
+                   MaxLength="50"
+                   ReturnType="Next" />
+
+            <Label Text="Edad" />
+            <Entry x:Name="txtEdad"
+                   Placeholder="Edad"
+                   Keyboard="Numeric"
+                   MaxLength="3"
+                   ReturnType="Done" />
+
+            <Label x:Name="lblMensaje"
+                   IsVisible="False"
+                   TextColor="{AppThemeBinding Light=#B3261E, Dark=#F2B8B5}" />
+
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="8"
+                  Margin="0,8,0,0">
+                <Button Text="Actualizar"
+                        Clicked="OnActualizarClicked" />
+                <Button Grid.Column="1"
+                        Text="Eliminar"
+                        BackgroundColor="{AppThemeBinding Light=#B3261E, Dark=#F2B8B5}"
+                        TextColor="{AppThemeBinding Light=White, Dark=#601410}"
+                        Clicked="OnEliminarClicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
